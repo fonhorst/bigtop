@@ -14,10 +14,33 @@
 # limitations under the License.
 
 class spark {
-  class common ($master_host = $fqdn, $master_port = "7077", $master_ui_port = "18080") {
+
+  class install_common {
     package { "spark-core":
       ensure => latest,
     }
+  }
+
+  class install_master {
+    package { "spark-master":
+      ensure => latest,
+    }
+  }
+
+  class install_worker {
+    package { "spark-worker":
+      ensure => latest,
+    }
+  }
+
+  class install_all {
+    include install_common
+    include install_master
+    include install_worker
+  }
+
+  class common ($master_host = $fqdn, $master_port = "7077", $master_ui_port = "18080") {
+    include install_common
 
     file { "/etc/spark/conf/spark-env.sh":
         content => template("spark/spark-env.sh"),
@@ -27,10 +50,8 @@ class spark {
 
   class master {
     include common   
+    include install_master
 
-    package { "spark-master":
-      ensure => latest,
-    }
 
     if ( $fqdn == $master_host ) {
       service { "spark-master":
@@ -45,10 +66,8 @@ class spark {
 
   class worker {
     include common
+    include install_worker
 
-    package { "spark-worker":
-      ensure => latest,
-    }
 
     if ( $fqdn == $master_host ) {
       Service["spark-master"] ~> Service["spark-worker"]
