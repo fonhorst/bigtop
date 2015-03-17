@@ -25,9 +25,103 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   include stdlib
 
-  class install_common {
-  	
+  class install_hadoop {
+  	 package { "hadoop":
+  	    ensure => latest,
+  	    require => Package["jdk"],
+     }
   }
+
+  class install_yarn {
+    include install_hadoop
+    package { "hadoop-yarn":
+        ensure => latest,
+        require => [Package["jdk"], Package["hadoop"]],
+    }
+  }
+
+  class install_hdfs {
+    include install_hadoop
+    package { "hadoop-hdfs":
+        ensure => latest,
+        require => [Package["jdk"], Package["hadoop"]],
+    }
+  }
+
+  class install_mapreduce {
+    include install_hadoop
+    package { "hadoop-mapreduce":
+        ensure => latest,
+        require => [Package["jdk"], Package["hadoop"]],
+    }
+  }
+
+  class install_hadoop_hdfs_datanode {
+    package { "hadoop-hdfs-datanode":
+        ensure => latest,
+        require => Package["jdk"],
+    }
+  }
+
+  class install_hadoop_httpfs {
+    package { "hadoop-httpfs":
+        ensure => latest,
+        require => Package["jdk"],
+    }
+  }
+
+  class install_hadoop_hdfs_namenode {
+    package {
+        "hadoop-hdfs-namenode":
+        ensure => latest,
+        require => Package["jdk"],
+    }
+  }
+
+  class install_hadoop_hdfs_secondarynamenode {
+    package { "hadoop-hdfs-secondarynamenode":
+        ensure => latest,
+        require => Package["jdk"],
+        }
+  }
+
+  class install_hadoop_hdfs_journalnode {
+    package { "hadoop-hdfs-journalnode":
+        ensure => latest,
+        require => Package["jdk"],
+     }
+   }
+
+  class install_hadoop_yarn_resourcemanager {
+    package { "hadoop-yarn-resourcemanager":
+                ensure => latest,
+                require => Package["jdk"],
+                }
+   }
+
+  class install_hadoop_yarn_proxyserver {
+    package { "hadoop-yarn-proxyserver":
+        ensure => latest,
+        require => Package["jdk"],
+      }
+  }
+
+  class install_hadoop_mapreduce_historyserver {
+    package { "hadoop-mapreduce-historyserver":
+        ensure => latest,
+        require => Package["jdk"],
+    }
+  }
+
+  class install_hadoop_yarn_nodemanager {
+    package { "hadoop-yarn-nodemanager":
+        ensure => latest,
+        require => Package["jdk"],
+    }
+  }
+
+
+
 
   class common ($hadoop_java_home = undef,
       $hadoop_classpath = undef,
@@ -50,16 +144,14 @@ class hadoop ($hadoop_security_authentication = "simple",
       $hadoop_niceness = undef,
   ) inherits hadoop {
 
+    include install_hadoop
+
     file {
       "/etc/hadoop/conf/hadoop-env.sh":
         content => template('hadoop/hadoop-env.sh'),
         require => [Package["hadoop"]],
     }
 
-    package { "hadoop":
-      ensure => latest,
-      require => Package["jdk"],
-    }
 
     #FIXME: package { "hadoop-native":
     #  ensure => latest,
@@ -92,11 +184,7 @@ class hadoop ($hadoop_security_authentication = "simple",
   ) inherits hadoop {
 
     include common
-
-    package { "hadoop-yarn":
-      ensure => latest,
-      require => [Package["jdk"], Package["hadoop"]],
-    }
+    include install_yarn
 
     if ($hadoop_security_authentication == "kerberos") {
       require kerberos::client
@@ -163,6 +251,7 @@ class hadoop ($hadoop_security_authentication = "simple",
     $sshfence_keypath = "$sshfence_keydir/id_sshfence"
 
     include common
+    include install_hdfs
 
   # Check if test mode is enforced, so we can install hdfs ssh-keys for passwordless
     if ($testonly_hdfs_sshkeys == "yes") {
@@ -203,10 +292,7 @@ class hadoop ($hadoop_security_authentication = "simple",
       fail("High-availability secure clusters are not currently supported")
     }
 
-    package { "hadoop-hdfs":
-      ensure => latest,
-      require => [Package["jdk"], Package["hadoop"]],
-    }
+
 
     if ($hadoop_security_authentication == "kerberos") {
       require kerberos::client
@@ -262,11 +348,9 @@ class hadoop ($hadoop_security_authentication = "simple",
       $kerberos_realm = $hadoop::kerberos_realm,
   ) inherits hadoop {
     include common_hdfs
+    include install_mapreduce
 
-    package { "hadoop-mapreduce":
-      ensure => latest,
-      require => [Package["jdk"], Package["hadoop"]],
-    }
+
 
     if ($hadoop_security_authentication == "kerberos") {
       require kerberos::client
@@ -297,11 +381,7 @@ class hadoop ($hadoop_security_authentication = "simple",
     $hadoop_security_authentication = $hadoop::hadoop_security_authentication,
   ) inherits hadoop {
     include common_hdfs
-
-    package { "hadoop-hdfs-datanode":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_hdfs_datanode
 
     file {
       "/etc/default/hadoop-hdfs-datanode":
@@ -334,17 +414,13 @@ class hadoop ($hadoop_security_authentication = "simple",
       $kerberos_realm = $hadoop::kerberos_realm,
   ) inherits hadoop {
     include common_hdfs
+    include install_hadoop_httpfs
 
     if ($hadoop_security_authentication == "kerberos") {
       kerberos::host_keytab { "httpfs":
         spnego => true,
         require => Package["hadoop-httpfs"],
       }
-    }
-
-    package { "hadoop-httpfs":
-      ensure => latest,
-      require => Package["jdk"],
     }
 
     file { "/etc/hadoop-httpfs/conf/httpfs-site.xml":
@@ -422,6 +498,7 @@ class hadoop ($hadoop_security_authentication = "simple",
       # milliseconds
       $standby_bootstrap_retry_interval = 30000) {
     include common_hdfs
+    include install_hadoop_hdfs_namenode
 
     if ($hadoop::common_hdfs::ha != 'disabled') {
       file { $hadoop::common_hdfs::sshfence_keydir:
@@ -473,11 +550,6 @@ class hadoop ($hadoop_security_authentication = "simple",
           }
         }
       }
-    }
-
-    package { "hadoop-hdfs-namenode":
-      ensure => latest,
-      require => Package["jdk"],
     }
 
     service { "hadoop-hdfs-namenode":
@@ -581,11 +653,7 @@ class hadoop ($hadoop_security_authentication = "simple",
       
   class secondarynamenode {
     include common_hdfs
-
-    package { "hadoop-hdfs-secondarynamenode":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_hdfs_secondarynamenode
 
     file {
       "/etc/default/hadoop-hdfs-secondarynamenode":
@@ -604,11 +672,7 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class journalnode {
     include common_hdfs
-
-    package { "hadoop-hdfs-journalnode":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_hdfs_journalnode
 
     $journalnode_cluster_journal_dir = "${hadoop::common_hdfs::journalnode_edits_dir}/${hadoop::common_hdfs::nameservice_id}"
 
@@ -632,11 +696,7 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class resourcemanager {
     include common_yarn
-
-    package { "hadoop-yarn-resourcemanager":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_yarn_resourcemanager
 
     service { "hadoop-yarn-resourcemanager":
       ensure => running,
@@ -650,11 +710,7 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class proxyserver {
     include common_yarn
-
-    package { "hadoop-yarn-proxyserver":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_yarn_proxyserver
 
     service { "hadoop-yarn-proxyserver":
       ensure => running,
@@ -668,11 +724,7 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class historyserver {
     include common_mapred_app
-
-    package { "hadoop-mapreduce-historyserver":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_mapreduce_historyserver
 
     service { "hadoop-mapreduce-historyserver":
       ensure => running,
@@ -687,11 +739,7 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class nodemanager {
     include common_yarn
-
-    package { "hadoop-yarn-nodemanager":
-      ensure => latest,
-      require => Package["jdk"],
-    }
+    include install_hadoop_yarn_nodemanager
  
     service { "hadoop-yarn-nodemanager":
       ensure => running,
