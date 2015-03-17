@@ -74,6 +74,7 @@ node default {
   #        include hadoop_worker_node
   #     }
 
+  include hadoop::install_all
   include spark::install_all
 }
 
