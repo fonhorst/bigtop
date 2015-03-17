@@ -52,6 +52,7 @@ package { $jdk_package_name:
 
 file {"/etc/profile.d/set_java_home.sh":
   content => "export JAVA_HOME=/usr/lib/jvm/java",
+  mode => 777,
   require => Package["jdk"],
 }
 
