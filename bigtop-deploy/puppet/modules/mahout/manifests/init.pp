@@ -14,10 +14,15 @@
 # limitations under the License.
 
 class mahout {
-  class client {
+
+  class install_mahout {
     package { "mahout":
       ensure => latest,
       require => Package["hadoop"],
-    } 
+    }
+  }
+
+  class client {
+    include install_mahout
   }
 }

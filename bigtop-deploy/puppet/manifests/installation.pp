@@ -75,6 +75,10 @@ node default {
   #     }
 
   include hadoop::install_all
+  include hadoop-flume::install_flume_agent
+  include hadoop-hive::install_hive
+  include mahout::install_mahout
+  include hadoop-pig::install_pig
   include spark::install_all
 }
 

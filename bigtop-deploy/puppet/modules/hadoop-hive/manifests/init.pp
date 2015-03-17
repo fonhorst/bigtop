@@ -14,11 +14,15 @@
 # limitations under the License.
 
 class hadoop-hive {
-  class client($hbase_master = "", $hbase_zookeeper_quorum = "") {
+
+  class install_hive {
     package { "hive":
       ensure => latest,
-    } 
+    }
+  }
 
+  class client($hbase_master = "", $hbase_zookeeper_quorum = "") {
+    include install_hive
     file { "/etc/hive/conf/hive-site.xml":
       content => template('hadoop-hive/hive-site.xml'),
       require => Package["hive"],

@@ -14,11 +14,16 @@
 # limitations under the License.
 
 class hadoop-pig {
-  class client {
+
+  class install_pig {
     package { "pig":
       ensure => latest,
       require => Package["hadoop"],
-    } 
+    }
+  }
+
+  class client {
+    include install_pig
  
     file { "/etc/pig/conf/pig.properties":
       content => template('hadoop-pig/pig.properties'),

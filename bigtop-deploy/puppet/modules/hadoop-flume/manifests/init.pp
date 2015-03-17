@@ -14,10 +14,15 @@
 # limitations under the License.
 
 class hadoop-flume {
-  class agent($sources = [], $sinks = [], $channels = []) {
-    package { "flume-agent":
+
+  class install_flume_agent {
+     package { "flume-agent":
       ensure => latest,
-    } 
+    }
+  }
+
+  class agent($sources = [], $sinks = [], $channels = []) {
+    include install_flume_agent
 
     file {
       "/etc/flume/conf/flume.conf":
