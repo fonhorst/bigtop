@@ -120,6 +120,20 @@ class hadoop ($hadoop_security_authentication = "simple",
     }
   }
 
+  class install_client_libraries {
+    $hadoop_client_packages = $operatingsystem ? {
+        /(OracleLinux|CentOS|RedHat|Fedora)/  => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client", "hadoop-libhdfs", "hadoop-debuginfo" ],
+        /(SLES|OpenSuSE)/                     => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client", "hadoop-libhdfs" ],
+        /(Ubuntu|Debian)/                     => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client", "libhdfs0-dev"   ],
+        default                               => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client" ],
+      }
+
+    package { $hadoop_client_packages:
+        ensure => latest,
+        require => [Package["jdk"], Package["hadoop"], Package["hadoop-hdfs"], Package["hadoop-mapreduce"]],
+      }
+  }
+
   class install_all {
     include install_hadoop
     include install_yarn
@@ -134,6 +148,7 @@ class hadoop ($hadoop_security_authentication = "simple",
     include install_hadoop_yarn_proxyserver
     include install_hadoop_mapreduce_historyserver
     include install_hadoop_yarn_nodemanager
+    include install_client_libraries
   }
 
 
@@ -789,17 +804,6 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class client {
       include common_mapred_app
-
-      $hadoop_client_packages = $operatingsystem ? {
-        /(OracleLinux|CentOS|RedHat|Fedora)/  => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client", "hadoop-libhdfs", "hadoop-debuginfo" ],
-        /(SLES|OpenSuSE)/                     => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client", "hadoop-libhdfs" ],
-        /(Ubuntu|Debian)/                     => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client", "libhdfs0-dev"   ],
-        default                               => [ "hadoop-doc", "hadoop-hdfs-fuse", "hadoop-client" ],
-      }
-
-      package { $hadoop_client_packages:
-        ensure => latest,
-        require => [Package["jdk"], Package["hadoop"], Package["hadoop-hdfs"], Package["hadoop-mapreduce"]],  
-      }
+      include install_client_libraries
   }
 }
