@@ -50,6 +50,11 @@ package { $jdk_package_name:
   alias => "jdk",
 }
 
+file {"/etc/profile.d/set_java_home.sh":
+  content => "export JAVA_HOME=/usr/lib/jvm/java",
+  required => Package["jdk"],
+}
+
 
 node default {
   #$hadoop_head_node = hiera("bigtop::hadoop_head_node")
