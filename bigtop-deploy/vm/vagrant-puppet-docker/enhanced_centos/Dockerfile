@@ -15,6 +15,9 @@
 
 FROM bigtop/seed:centos-6.4
 
+ENV http_proxy proxy.ifmo.ru:3128
+ENV HTTP_PROXY proxy.ifmo.ru:3128
+
 # enable ssh
 RUN yum -y install openssh-server openssh-clients sudo
 RUN sed -i.bak s/UsePAM\ yes/UsePAM\ no/ /etc/ssh/sshd_config
@@ -30,8 +33,8 @@ RUN chmod 0750 /root/.ssh
 RUN wget http://github.com/mitchellh/vagrant/raw/master/keys/vagrant.pub --no-check-certificate -O /root/.ssh/authorized_keys
 RUN chmod 0640 /root/.ssh/authorized_keys
 
-ADD ../../../ /bigtop-home
-ADD ../../utils/setup-env-centos.sh /tmp/setup-env.sh
-RUN /tmp/setup-env.sh
+ADD https://github.com/fonhorst/bigtop/archive/master.tar.gz /tmp/bigtop.tar.gz
+RUN tar -xvf /tmp/bigtop.tar.gz -C / && mv /bigtop-master /bigtop-home
+RUN /bigtop-home/bigtop-deploy/vm/utils/setup-env-centos.sh
 
 CMD /usr/sbin/sshd -D

@@ -25,6 +25,10 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   include stdlib
 
+  class install_common {
+  	
+  }
+
   class common ($hadoop_java_home = undef,
       $hadoop_classpath = undef,
       $hadoop_heapsize = undef,

@@ -15,6 +15,13 @@
 
 FROM bigtop/seed:centos-6.4
 
+## pure hack due to presence of proxy in our infrastructure. Remove it later.
+ENV http_proxy proxy.ifmo.ru:3128
+ENV HTTP_PROXY proxy.ifmo.ru:3128
+
+RUN (echo "export http_proxy=proxy.ifmo.ru:3128" >> /root/.bash_profile) && (echo "export HTTP_PROXY=proxy.ifmo.ru:3128" >> /root/.bash_profile) 
+
+
 # enable ssh
 RUN yum -y install openssh-server openssh-clients sudo
 RUN sed -i.bak s/UsePAM\ yes/UsePAM\ no/ /etc/ssh/sshd_config
