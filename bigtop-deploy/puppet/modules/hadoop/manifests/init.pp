@@ -122,18 +122,18 @@ class hadoop ($hadoop_security_authentication = "simple",
 
   class install_all {
     include install_hadoop
-    inlcude install_yarn
-    inlcude install_hdfs
-    inlcude install_mapreduce
-    inlcude install_hadoop_hdfs_datanode
-    inlcude install_hadoop_httpfs
-    inlcude install_hadoop_hdfs_namenode
-    inlcude install_hadoop_hdfs_secondarynamenode
-    inlcude install_hadoop_hdfs_journalnode
-    inlcude install_hadoop_yarn_resourcemanager
-    inlcude install_hadoop_yarn_proxyserver
-    inlcude install_hadoop_mapreduce_historyserver
-    inlcude install_hadoop_yarn_nodemanager
+    include install_yarn
+    include install_hdfs
+    include install_mapreduce
+    include install_hadoop_hdfs_datanode
+    include install_hadoop_httpfs
+    include install_hadoop_hdfs_namenode
+    include install_hadoop_hdfs_secondarynamenode
+    include install_hadoop_hdfs_journalnode
+    include install_hadoop_yarn_resourcemanager
+    include install_hadoop_yarn_proxyserver
+    include install_hadoop_mapreduce_historyserver
+    include install_hadoop_yarn_nodemanager
   }
 
 
