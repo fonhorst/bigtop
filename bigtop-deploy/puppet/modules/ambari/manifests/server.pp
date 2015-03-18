@@ -1,5 +1,8 @@
 class ambari::server () {
 
+  Exec {
+        path => ["/bin/", "/sbin/", "/usr/bin/", "/usr/sbin/"] }
+
   include ambari::installation::install_server
 
   exec { 'ambari-setup':
@@ -20,8 +23,8 @@ class ambari::server () {
   }
 
   exec { 'ambari-server-start':
-    command => "ambari-server start",
+    command => "service ambari-server start",
     require => Service[ambari-server],
-    onlyif  => 'ambari-server status | grep "not running"'
+    onlyif  => 'service ambari-server status | grep "not running"'
   }
 }
