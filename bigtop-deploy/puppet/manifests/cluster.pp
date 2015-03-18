@@ -86,6 +86,13 @@ class hadoop_worker_node (
     include tachyon::worker
   }
 
+  if ($all or "ambari" in $components) {
+    include ambari
+	class { 'ambari::agent':
+  		serverhostname => bigtop::hadoop_head_node
+	}
+  }
+
 }
 
 class hadoop_head_node inherits hadoop_worker_node {
@@ -145,6 +152,11 @@ if ($hadoop_security_authentication == "kerberos") {
 
   if ($all or "hbase" in $components) {
     include hadoop-zookeeper::server
+  }
+
+  if ($all or "ambari" in $components) {
+    include ambari
+	class { 'ambari::server': }
   }
 
   # class hadoop::rsync_hdfs isn't used anywhere

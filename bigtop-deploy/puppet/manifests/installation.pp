@@ -86,6 +86,7 @@ node default {
   include mahout::install_mahout
   include hadoop-pig::install_pig
   include spark::install_all
+  include ambari::installation::install_all
 }
 
 #if ($hadoop_gateway_node == $::fqdn) {

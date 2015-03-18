@@ -33,6 +33,12 @@ class spark {
     }
   }
 
+  class install_spark_submit {
+    package { "spark-submit":
+      ensure => latest,
+    }
+  }
+
   class install_all {
     include install_common
     include install_master
