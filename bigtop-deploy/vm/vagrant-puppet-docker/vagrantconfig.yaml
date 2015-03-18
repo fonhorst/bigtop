@@ -7,7 +7,7 @@ boot2docker:
         number_cpus: "4"
 
 repo: "http://bigtop01.cloudera.org:8080/view/Releases/job/Bigtop-0.8.0/label=centos6/6/artifact/output/"
-distro: spark_image
+distro: centos
 components: [hadoop, yarn, ambari]
 namenode_ui_port: "50070"
 yarn_ui_port: "8088"
