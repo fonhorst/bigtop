@@ -8,6 +8,11 @@ class ambari::server () {
     require => Package[ambari-server]
   }
 
+  file { '/etc/ambari-server/conf/ambari.properties':
+    content => template("ambari/ambari.properties"),
+    require => Package[ambari-server]
+  }
+
   service { 'ambari-server':
     ensure  => running,
     require => [Package[ambari-server], Exec[ambari-setup]],
