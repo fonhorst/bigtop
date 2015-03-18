@@ -1,6 +1,6 @@
 docker:
         memory_size: "2048"
-        image: "bigtop/bigtop-spark-1.2"
+        image: "fonhorst/bigtop-spark-1.2"
 
 boot2docker:
         memory_size: "4196"
