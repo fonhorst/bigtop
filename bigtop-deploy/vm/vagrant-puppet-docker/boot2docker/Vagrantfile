@@ -9,7 +9,7 @@ CONF = _config
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-
+  config.vm.provision :shell, path: './provision.sh'
   config.vm.define "boot2docker" do |node|
     node.vm.box = "yungsang/boot2docker"
     node.vm.provider "virtualbox" do |vb|

@@ -3,8 +3,8 @@ docker:
         image: "fonhorst/bigtop-spark-1.2"
 
 boot2docker:
-        memory_size: "4196"
-        number_cpus: "2"
+        memory_size: "6144"
+        number_cpus: "4"
 
 repo: "http://bigtop01.cloudera.org:8080/view/Releases/job/Bigtop-0.8.0/label=centos6/6/artifact/output/"
 distro: spark_image
